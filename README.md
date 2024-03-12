@@ -17,7 +17,7 @@ $ make
 $ ./keygen [prefix]
 ```
 
-generates two keyfiles, one that corresponds to the private key with the .sk extension, and and that corresponds to the associated public key with the .pk extension. Both have the specified prefix in their name, and are exacty 32 bytes. 
+generates two keyfiles, one that corresponds to the private key with the `.sk` extension, and and that corresponds to the associated public key with the `.pk` extension. Both have the specified prefix in their name, and are exacty 32 bytes. 
 
 
 ### Sign a file with a private key
@@ -26,39 +26,34 @@ generates two keyfiles, one that corresponds to the private key with the .sk ext
 $ ./sign [prefix] [data] [sigfile]
 ```
 
-where prefix is the common part of filenames (before the expected extensions .pk and .sk) of the keypair used to sign the [data] file.
+where `prefix` is the common part of filenames (before the expected extensions `.pk` and `.sk`) of the keypair used to sign the `data` file.
 
 These keyfiles should be exactly 32 bytes. 
 
-The program has an undefined behavior if the public key isn't produced by the specified public key, that is the signature will be wrong. 
+The program has an undefined behavior if the public key and the private key don't match : the signature will probably be wrong in this case. 
 
-Exactly 64 bytes are written to [sigfile], that correspond to the signature of the file under prefix.sk
+Exactly 64 bytes are written to `sigfile`, that correspond to the signature of the file under `prefix.sk`
 
 ### Verify a signature
 
+```
 $ ./verify [pubkeyfile] [data] [sigfile]
+```
 
-prints ACCEPT or REJECT depending on whether [sigfile] contains the signature of the [data] file produced by the private key associated to the provided public key.
+prints `ACCEPT` or `REJECT` depending on whether `sigfile` contains the signature of the `data` file produced by the private key associated to the provided public key.
 
-The program won't run if sigfile doesn't contain exactly 64 bytes, or if pubkeyfile doesn't contain exactly 32 bytes. 
+The program won't run if sigfile doesn't contain exactly 64 bytes, or if `pubkeyfile` doesn't contain exactly 32 bytes. 
 
 
-## Implementation 
+## Constant time scalar multiplication
 
 These programs were implemented by following the RFC 8032 specification on Ed25519 signature scheme. 
-
 The implementation the RFC suggests doesn't do scalar multiplication on elliptic curves points in constant-time. 
-For this specific computation, points on Edwards curve with parameters p, a, and d are converted to points on the birationally equivalent Montgomery curve with parameters p, A and B. 
+
+For this specific computation, points on Edwards curve with parameters $p$, $a$, and $d$ are converted to points on the birationally equivalent Montgomery curve with parameters $p$, $A$ and $B$. 
 Formulae were taken from https://inria.hal.science/hal-01483768/document
 
-The Montgomery ladder implemented in a previous assignment is now accepting the parameter B, and recovers the y coordinate of the iterated point after getting its x coordinate.
-
-The size of B isn't strictly controlled, but it could have been. 
-
-One could have a target B, say 1, and scale the Montgomery coordinates obtained from the Edwards coordinates, provided we make the reasonable assumption that B is a quadratic residue modulo p since nearly all the curves have a B = 1.
-
-I couldn't figure out how to treat the case where B is a nonquadratic residue modulo p so I gave leeway to B, since I want the interfaces edwards.h and montgomery.h to be functional for a wide range of curves, not the just the ones used in this assignment.
-
+Doing a constant time scalar multiplication on a Montgomery curve is easier, hence the conversion. 
 
 This constant-time scalar multiplication isn't satisfying because the secret scalars go through computations made by GMP. The most concerning and probably secret-dependant computation is the modular reduction of a 512-bit hash (interpreted as little-endian integer) to a (nearly) 256-bit number, that will serve a secret scalar.
 
