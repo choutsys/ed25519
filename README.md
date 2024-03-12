@@ -9,6 +9,8 @@ Navigate to this directory and run
 $ make
 ```
 
+GCC, GMP and OpenSSL should be installed for the programs to compile.
+
 ## Run the programs
 
 ### Generate a random key pair 
