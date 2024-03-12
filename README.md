@@ -50,7 +50,8 @@ The program won't run if sigfile doesn't contain exactly 64 bytes, or if `pubkey
 ## Constant time scalar multiplication
 
 These programs were implemented by following the RFC 8032 specification on Ed25519 signature scheme. 
-The implementation the RFC suggests doesn't do scalar multiplication on elliptic curves points in constant-time. 
+
+The implementation the RFC suggests doesn't do scalar multiplication on elliptic curves points in a constant-time fashion, which is absolutely wrong in real-world crypto. 
 
 For this specific computation, points on Edwards curve with parameters $p$, $a$, and $d$ are converted to points on the birationally equivalent Montgomery curve with parameters $p$, $A$ and $B$. 
 
