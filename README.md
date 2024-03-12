@@ -51,18 +51,16 @@ These programs were implemented by following the RFC 8032 specification on Ed255
 The implementation the RFC suggests doesn't do scalar multiplication on elliptic curves points in constant-time. 
 
 For this specific computation, points on Edwards curve with parameters $p$, $a$, and $d$ are converted to points on the birationally equivalent Montgomery curve with parameters $p$, $A$ and $B$. 
+
 Formulae were taken from https://inria.hal.science/hal-01483768/document
 
-Doing a constant time scalar multiplication on a Montgomery curve is easier, hence the conversion. 
-
-This constant-time scalar multiplication isn't satisfying because the secret scalars go through computations made by GMP. The most concerning and probably secret-dependant computation is the modular reduction of a 512-bit hash (interpreted as little-endian integer) to a (nearly) 256-bit number, that will serve a secret scalar.
-
-Even though I had already implemented a basic low-level library to manipulate 26-bit limbs in order to perform modular multiplication in $\mathbb{F}_p$ where $p$ isn't far from a power of two, I am compelled to notice that the numbers manipulated had the right amount of limbs in the first place, beore being reduced or multiplied back then (assignment 2).
+Doing a constant time scalar multiplication on a Montgomery curve is easier, hence the conversion. This multiplication is done similarly to what is suggested in that document.
 
 
-The difficulty here is to reduce a number that is supposed to have twice the number of 26-bit limbs (if we were to do the same as in Assignment 2) modulo an integer that isn't that close to a power of two. That was too much for my limbic system.
+Although the step of the scalar multiplication per se is immune to cache attacks and timing attacks, that scalar is derived from a modular reduction and is involved in multiplication, and these computations are done via GMP. 
 
-I stumbled upon Barrett reduction, the conditions here are met for $n$ (where $n$ is the distance to the nearest power of two of the size of the curve group) to apply that reduction but I couldn't implement it by the Assignment deadline. 
+The most concerning and probably secret-dependant computation is the modular reduction of a 512-bit hash (interpreted as little-endian integer) to a 256-bit number.
 
+Hardening this signature scheme would require to implement something like Barrett reduction in lieu of this step.
 
-The other extensions suggested (multiexponentiation, and batch verifications) weren't implemented for the same reason. 
+The multiplication involving the secret scalar could be then done via a handmade arithmetic library that performs addition and multiplication on 26-bit limbs : https://loup-vaillant.fr/tutorials/poly1305-design
