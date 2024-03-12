@@ -1,4 +1,4 @@
-# Ed25519 implementation by Matthias Chouteau
+# Ed25519 signature scheme with constant time scalar multiplication
 
 
 ## Build the programs
