@@ -5,7 +5,9 @@
 
 Navigate to this directory and run
 
-$ make 
+```
+$ make
+```
 
 ## Run the programs
 
