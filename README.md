@@ -57,7 +57,7 @@ Formulae were taken from https://inria.hal.science/hal-01483768/document
 Doing a constant time scalar multiplication on a Montgomery curve is easier, hence the conversion. This multiplication is done similarly to what is suggested in that document.
 
 
-Although the step of the scalar multiplication per se is immune to cache attacks and timing attacks, that scalar is derived from a modular reduction and is involved in multiplication, and these computations are done via GMP. 
+Although the step of the scalar multiplication per se is immune to cache attacks and timing attacks, that scalar is derived from a modular reduction and is involved in multiplication before being ready for the montgomery curve, and these computations are done via GMP. 
 
 The most concerning and probably secret-dependant computation is the modular reduction of a 512-bit hash (interpreted as little-endian integer) to a 256-bit number.
 
