@@ -13,14 +13,18 @@ $ make
 
 ### Generate a random key pair 
 
+```
 $ ./keygen [prefix]
+```
 
 generates two keyfiles, one that corresponds to the private key with the .sk extension, and and that corresponds to the associated public key with the .pk extension. Both have the specified prefix in their name, and are exacty 32 bytes. 
 
 
 ### Sign a file with a private key
 
+```
 $ ./sign [prefix] [data] [sigfile]
+```
 
 where prefix is the common part of filenames (before the expected extensions .pk and .sk) of the keypair used to sign the [data] file.
 
